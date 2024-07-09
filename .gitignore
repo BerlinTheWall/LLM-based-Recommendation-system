@@ -1,0 +1,17 @@
+# Ignore processed_dataset folder
+processed_dataset/
+
+# Ignore tb_logs folder
+tb_logs/
+
+# Ignore embeddings folder
+embeddings/
+
+# Ignore text_for_embeddings folder
+text_for_embeddings/
+
+# Ignore local_model_path folder
+local_model_path/
+
+# Ignore datasets folder
+datasets/
