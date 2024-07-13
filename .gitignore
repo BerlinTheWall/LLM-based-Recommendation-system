@@ -4,6 +4,9 @@ processed_dataset/
 # Ignore tb_logs folder
 tb_logs/
 
+# Ignore tb_logs folder
+lightning_logs/
+
 # Ignore embeddings folder
 embeddings/
 
