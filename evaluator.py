@@ -65,6 +65,85 @@ class EvaluateMetrics:
             'HR@k': average_hr
         }
 
+    def evaluate_recommendation_without_history(self, recommendations, k):
+        ndcg_scores = []
+        mrr_scores = []
+        hr_scores = []
+
+        for user_id in recommendations.keys():
+            user_recommendations = recommendations[user_id]
+            # Filter test ratings for the current user
+            user_test_ratings = self.test_ratings[self.test_ratings['user_id'] == user_id]
+
+            relevance_scores = []
+            for item_id in user_recommendations.index:
+                if item_id in user_test_ratings['item_id'].values:
+                    relevance_scores.append(
+                        user_test_ratings[user_test_ratings['item_id'] == item_id]['rating'].values[0] / 5)
+                else:
+                    relevance_scores.append(0)
+
+            # Calculate metrics
+            ndcg_scores.append(self.ndcg_at_k(relevance_scores, k))
+            mrr_scores.append(self.mrr_at_k(relevance_scores, k))
+            hr_scores.append(self.hr_at_k(relevance_scores, k))
+
+        average_ndcg = np.mean(ndcg_scores)
+        average_mrr = np.mean(mrr_scores)
+        average_hr = np.mean(hr_scores)
+
+        return {
+            'NDCG@k': average_ndcg,
+            'MRR@k': average_mrr,
+            'HR@k': average_hr
+        }
+
+    def evaluate_recommendation_with_history(self, recommendations, k):
+        user_metrics = {}
+
+        for user_id, user_recommendations in recommendations:
+            # Filter test ratings for the current user
+            user_test_ratings = self.test_ratings[self.test_ratings['user_id'] == user_id]
+
+            relevance_scores = []
+            for item_id in user_recommendations.index:
+                if item_id in user_test_ratings['item_id'].values:
+                    relevance_score = user_test_ratings[user_test_ratings['item_id'] == item_id]['rating'].values[0]
+                    relevance_scores.append(relevance_score / 5)  # Normalize if ratings are 1 to 5
+                else:
+                    relevance_scores.append(0)
+
+            # Calculate metrics
+            ndcg = self.ndcg_at_k(relevance_scores, k)
+            mrr = self.mrr_at_k(relevance_scores, k)
+            hr = self.hr_at_k(relevance_scores, k)
+
+            if user_id not in user_metrics:
+                user_metrics[user_id] = {
+                    'ndcg': [],
+                    'mrr': [],
+                    'hr': []
+                }
+
+            user_metrics[user_id]['ndcg'].append(ndcg)
+            user_metrics[user_id]['mrr'].append(mrr)
+            user_metrics[user_id]['hr'].append(hr)
+
+        # Aggregate metrics for each user
+        ndcg_scores = [np.mean(metrics['ndcg']) for metrics in user_metrics.values()]
+        mrr_scores = [np.mean(metrics['mrr']) for metrics in user_metrics.values()]
+        hr_scores = [np.mean(metrics['hr']) for metrics in user_metrics.values()]
+
+        average_ndcg = np.mean(ndcg_scores)
+        average_mrr = np.mean(mrr_scores)
+        average_hr = np.mean(hr_scores)
+
+        return {
+            'NDCG@k': average_ndcg,
+            'MRR@k': average_mrr,
+            'HR@k': average_hr
+        }
+
     def evaluate_recommendations_svd(self, recommendations, k):
         ndcg_scores = []
         mrr_scores = []

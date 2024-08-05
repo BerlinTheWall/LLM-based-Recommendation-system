@@ -3,6 +3,7 @@ from sklearn.model_selection import train_test_split
 import json
 import os
 
+
 class DatasetProcessor:
     def __init__(self, file_path, fields, file_name):
         self.file_path = file_path
@@ -33,15 +34,13 @@ class DatasetProcessor:
         # self.data.rename(columns={'overall': 'rating', 'reviewerID': 'user_id', 'asin': 'item_id'}, inplace=True)
         self.data.rename(columns={'asin': 'item_id'}, inplace=True)
 
-
     def read_dat_to_df(self):
         self.data = pd.read_csv(
-            self.file_path, delimiter='::', header=None, engine='python', encoding = "ISO-8859-1",
+            self.file_path, delimiter='::', header=None, engine='python', encoding="ISO-8859-1",
             names=['user_id', 'item_id', 'rating', 'timestamp']
             # names=['user_id', 'gender', 'age', 'occupation', 'zip_code']
             # names=['item_id', 'title', 'genres']
         )
-
 
     def read_csv_to_df(self):
         self.data = pd.read_csv(self.file_path)
@@ -55,46 +54,56 @@ class DatasetProcessor:
         else:
             raise ValueError("Unsupported file format. Please provide a .jsonl or .dat file.")
 
-
-
-    # def split_data(self, test_size=0.2, random_state=5):
-    #     if self.data is not None:
-    #         self.train_set, self.test_set = train_test_split(self.data, test_size=test_size, random_state=random_state)
-    #     else:
-    #         raise ValueError("Data not loaded. Please run load_data() first.")
-
-    def split_data(self, train_size=0.6, val_size=0.2, test_size=0.2, random_state=5):
-        if self.data is not None:
-            self.data = self.data.sort_values(by='timestamp')
-            train_data, temp_data = train_test_split(self.data, test_size=(val_size + test_size), random_state=random_state)
-            val_data, test_data = train_test_split(temp_data, test_size=test_size/(val_size + test_size), random_state=random_state)
-            self.train_set = train_data.sort_values(by='timestamp').reset_index(drop=True)
-            self.val_set = val_data.sort_values(by='timestamp').reset_index(drop=True)
-            self.test_set = test_data.sort_values(by='timestamp').reset_index(drop=True)
-        else:
+    def split_data(self, train_size=0.8, val_size=0.1, test_size=0.1, random_state=5):
+        if self.data is None:
             raise ValueError("Data not loaded. Please run load_data() first.")
 
+        # Ensure that the sum of train_size, val_size, and test_size is 1.0
+        if train_size + val_size + test_size != 1.0:
+            raise ValueError("Train, validation, and test sizes must sum to 1.0")
 
-    # def save_data(self, output_dir='.', prefix='dataset'):
-    #     if self.train_set is not None and self.test_set is not None and self.data is not None:
-    #         full_data_file = os.path.join(output_dir, f"{prefix}_full_{self.file_name}.csv")
-    #         train_file = os.path.join(output_dir, f"{prefix}_train_{self.file_name}.csv")
-    #         test_file = os.path.join(output_dir, f"{prefix}_test_{self.file_name}.csv")
-    #         self.data.to_csv(full_data_file, index=False)
-    #         self.train_set.to_csv(train_file, index=False)
-    #         self.test_set.to_csv(test_file, index=False)
-    #         print(f"Full data set saved to: {full_data_file}")
-    #         print(f"Train set saved to: {train_file}")
-    #         print(f"Test set saved to: {test_file}")
-    #     else:
-    #         raise ValueError("Train or test set not created. Please run split_data() first.")
+        # Sort data by timestamp
+        self.data = self.data.sort_values(by='timestamp')
 
-    def save_data(self, output_dir='.', prefix='dataset'):
+        # Initialize empty DataFrames for the splits
+        train_list = []
+        val_list = []
+        test_list = []
+
+        # Group data by userId
+        grouped = self.data.groupby('user_id')
+
+        for userId, group in grouped:
+            # Split the data for each userId
+            train_data, temp_data = train_test_split(
+                group,
+                test_size=(val_size + test_size),
+                random_state=random_state,
+                shuffle=False  # Preserve timestamp order
+            )
+
+            val_data, test_data = train_test_split(
+                temp_data,
+                test_size=test_size / (val_size + test_size),
+                random_state=random_state,
+                shuffle=False  # Preserve timestamp order
+            )
+
+            train_list.append(train_data.sort_values(by='timestamp'))
+            val_list.append(val_data.sort_values(by='timestamp'))
+            test_list.append(test_data.sort_values(by='timestamp'))
+
+        # Concatenate the lists to form the final datasets
+        self.train_set = pd.concat(train_list).reset_index(drop=True)
+        self.val_set = pd.concat(val_list).reset_index(drop=True)
+        self.test_set = pd.concat(test_list).reset_index(drop=True)
+
+    def save_data(self, output_dir='.', prefix=''):
         if self.train_set is not None and self.val_set is not None and self.test_set is not None and self.data is not None:
-            full_data_file = os.path.join(output_dir, f"{prefix}_full_{self.file_name}.csv")
-            train_file = os.path.join(output_dir, f"{prefix}_train_{self.file_name}.csv")
-            val_file = os.path.join(output_dir, f"{prefix}_val_{self.file_name}.csv")
-            test_file = os.path.join(output_dir, f"{prefix}_test_{self.file_name}.csv")
+            full_data_file = os.path.join(output_dir, f"{prefix}_fulldata_{self.file_name}.csv")
+            train_file = os.path.join(output_dir, f"{prefix}_traindata_{self.file_name}.csv")
+            val_file = os.path.join(output_dir, f"{prefix}_valdata_{self.file_name}.csv")
+            test_file = os.path.join(output_dir, f"{prefix}_testdata_{self.file_name}.csv")
             self.data.to_csv(full_data_file, index=False)
             self.train_set.to_csv(train_file, index=False)
             self.val_set.to_csv(val_file, index=False)
@@ -105,7 +114,6 @@ class DatasetProcessor:
             print(f"Test set saved to: {test_file}")
         else:
             raise ValueError("Train, validation, or test set not created. Please run split_data() first.")
-
 
     def filter_data(self, min_ratings):
         if self.data is not None:
@@ -121,7 +129,6 @@ class DatasetProcessor:
             print(f'\nFinal length of the dataset :', len(filtered_data))
 
             self.data = filtered_data
-            print(self.data)
         else:
             raise ValueError("Data not loaded. Please run load_data() first.")
 
@@ -143,29 +150,13 @@ class DatasetProcessor:
                 raise ValueError(f"Column '{column_name}' not found in the data.")
         else:
             raise ValueError("Data not loaded. Please run load_data() first.")
-# # Usage
-# fields = ['rating', 'user_id', 'asin']
-# # Amazon Beauty Dataset
-# processor = DatasetProcessor('datasets/Beauty/All_Beauty.jsonl/All_Beauty.jsonl', fields, 'beauty')
-# processor.load_data()
-# processor.split_data()
-# processor.save_data()
-#
-# # Amazon Beauty Dataset
-# processor = DatasetProcessor('datasets/Sports_and_Outdoors/Sports_and_Outdoors.jsonl/Sports_and_Outdoors.jsonl', fields, 'sports')
-# processor.load_data()
-# processor.split_data()
-# processor.save_data()
-#
-# # Amazon Beauty Dataset
-# processor = DatasetProcessor('datasets/Toys_and_Games/Toys_and_Games.jsonl/Toys_and_Games.jsonl', fields, 'toys')
-# processor.load_data()
-# processor.split_data()
-# processor.save_data()
-#
-# # For a .dat file
-# fields = ['rating', 'user_id', 'item_id']
-# processor_dat = DatasetProcessor('datasets/ml-1m/ml-1m/ratings.dat', fields, 'movielens')
-# processor_dat.load_data()
-# processor_dat.split_data()
-# processor_dat.save_data()
+
+    def binarize_ratings(self, threshold):
+        if self.data is not None:
+            if 'rating' in self.data.columns:
+                self.data['rating'] = self.data['rating'].apply(lambda x: 1 if x >= threshold else 0)
+                print(f"Ratings binarized with threshold {threshold}.")
+            else:
+                raise ValueError("Column 'rating' not found in the data.")
+        else:
+            raise ValueError("Data not loaded. Please run load_data() first.")

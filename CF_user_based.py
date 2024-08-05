@@ -39,14 +39,50 @@ class UserBasedCF:
         self.user_similarity_df = pd.DataFrame.sparse.from_spmatrix(self.sparse_user_similarity, index=self.user_id_map,
                                                                     columns=self.user_id_map)
 
-    def get_recommendations(self, user_id, k):
+    # def get_recommendations(self, user_id, k):
+    #
+    #     if user_id not in self.user_similarity_df.index:
+    #         return pd.Series()
+    #     # Get the similarity scores for the user and filter out users with similarity <= 0
+    #     similar_users = self.user_similarity_df[user_id][self.user_similarity_df[user_id] > 0].sort_values(
+    #         ascending=False)
+    #     # print(similar_users)
+    #
+    #     if similar_users.empty:
+    #         return pd.Series()  # Return an empty series if no similar users with similarity > 0
+    #
+    #     # Get indices of similar users
+    #     similar_users_indices = similar_users.index
+    #
+    #     # Create a sparse matrix of user ratings filtered by similar users
+    #     user_ratings_sparse = self.user_item_matrix.loc[similar_users_indices].to_numpy()
+    #     user_similarities = similar_users.to_numpy()
+    #
+    #     # Calculate weighted ratings
+    #     weighted_ratings = user_ratings_sparse.T.dot(user_similarities) / user_similarities.sum()
+    #
+    #     # Normalize weighted ratings to be between 1 and 5
+    #     min_rating = 1
+    #     max_rating = 5
+    #     weighted_ratings = min_rating + (max_rating - min_rating) * (weighted_ratings - weighted_ratings.min()) / (
+    #             weighted_ratings.max() - weighted_ratings.min())
+    #
+    #     # Convert the weighted ratings back to a Series with item IDs as index
+    #     weighted_ratings_series = pd.Series(weighted_ratings, index=self.user_item_matrix.columns)
+    #
+    #     # Exclude items the user has already rated
+    #     already_rated = self.user_item_matrix.loc[user_id][self.user_item_matrix.loc[user_id] > 0].index
+    #     recommendations = weighted_ratings_series.drop(already_rated).sort_values(ascending=False).head(k)
+    #
+    #     return recommendations
 
+    def get_recommendations(self, user_id, k):
         if user_id not in self.user_similarity_df.index:
             return pd.Series()
+
         # Get the similarity scores for the user and filter out users with similarity <= 0
         similar_users = self.user_similarity_df[user_id][self.user_similarity_df[user_id] > 0].sort_values(
             ascending=False)
-        # print(similar_users)
 
         if similar_users.empty:
             return pd.Series()  # Return an empty series if no similar users with similarity > 0
@@ -60,6 +96,12 @@ class UserBasedCF:
 
         # Calculate weighted ratings
         weighted_ratings = user_ratings_sparse.T.dot(user_similarities) / user_similarities.sum()
+
+        # Normalize weighted ratings to be between 1 and 5
+        min_rating = 1
+        max_rating = 5
+        weighted_ratings = min_rating + (max_rating - min_rating) * (weighted_ratings - weighted_ratings.min()) / (
+                weighted_ratings.max() - weighted_ratings.min())
 
         # Convert the weighted ratings back to a Series with item IDs as index
         weighted_ratings_series = pd.Series(weighted_ratings, index=self.user_item_matrix.columns)
