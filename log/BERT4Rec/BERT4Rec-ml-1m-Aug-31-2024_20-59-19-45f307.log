@@ -1,0 +1,38 @@
+Sat 31 Aug 2024 20:59:37 INFO  [Training]: train_batch_size = [512] train_neg_sample_args: [{'distribution': 'none', 'sample_num': 'none', 'alpha': 'none', 'dynamic': False, 'candidate_num': 0}]
+Sat 31 Aug 2024 20:59:37 INFO  [Evaluation]: eval_batch_size = [256] eval_args: [{'split': {'RS': [0.8, 0.1, 0.1]}, 'order': 'TO', 'group_by': 'user', 'mode': {'valid': 'full', 'test': 'full'}, 'topk': [5, 10]}]
+Sat 31 Aug 2024 21:02:22 INFO  [Training]: train_batch_size = [512] train_neg_sample_args: [{'distribution': 'none', 'sample_num': 'none', 'alpha': 'none', 'dynamic': False, 'candidate_num': 0}]
+Sat 31 Aug 2024 21:02:22 INFO  [Evaluation]: eval_batch_size = [256] eval_args: [{'split': {'RS': [0.8, 0.1, 0.1]}, 'order': 'TO', 'group_by': 'user', 'mode': {'valid': 'full', 'test': 'full'}, 'topk': [5, 10]}]
+Sat 31 Aug 2024 21:09:06 INFO  epoch 0 training [time: 402.07s, train loss: 10344.1301]
+Sat 31 Aug 2024 21:09:21 INFO  epoch 0 evaluating [time: 15.48s, valid_score: 0.038300]
+Sat 31 Aug 2024 21:09:21 INFO  valid result: 
+recall@10 : 0.1167    mrr@10 : 0.0383    ndcg@10 : 0.0563    hit@10 : 0.1167    precision@10 : 0.0117
+Sat 31 Aug 2024 21:09:21 INFO  Saving current: saved\BERT4Rec-Aug-31-2024_21-02-23.pth
+Sat 31 Aug 2024 21:09:21 INFO  Loading model structure and parameters from saved\BERT4Rec-Aug-31-2024_21-02-23.pth
+Sat 31 Aug 2024 21:24:03 INFO  [Training]: train_batch_size = [512] train_neg_sample_args: [{'distribution': 'none', 'sample_num': 'none', 'alpha': 'none', 'dynamic': False, 'candidate_num': 0}]
+Sat 31 Aug 2024 21:24:03 INFO  [Evaluation]: eval_batch_size = [256] eval_args: [{'split': {'RS': [0.8, 0.1, 0.1]}, 'order': 'TO', 'group_by': 'user', 'mode': {'valid': 'full', 'test': 'full'}, 'topk': [5, 10]}]
+Sat 31 Aug 2024 21:29:59 INFO  epoch 0 training [time: 356.29s, train loss: 10344.1301]
+Sat 31 Aug 2024 21:30:16 INFO  epoch 0 evaluating [time: 16.85s, valid_score: 0.038300]
+Sat 31 Aug 2024 21:30:16 INFO  valid result: 
+recall@10 : 0.1167    mrr@10 : 0.0383    ndcg@10 : 0.0563    hit@10 : 0.1167    precision@10 : 0.0117
+Sat 31 Aug 2024 21:30:16 INFO  Saving current: saved\BERT4Rec-Aug-31-2024_21-24-03.pth
+Sat 31 Aug 2024 21:35:47 INFO  epoch 1 training [time: 331.45s, train loss: 9227.7753]
+Sat 31 Aug 2024 21:36:03 INFO  epoch 1 evaluating [time: 15.16s, valid_score: 0.046800]
+Sat 31 Aug 2024 21:36:03 INFO  valid result: 
+recall@10 : 0.141    mrr@10 : 0.0468    ndcg@10 : 0.0685    hit@10 : 0.141    precision@10 : 0.0141
+Sat 31 Aug 2024 21:36:03 INFO  Saving current: saved\BERT4Rec-Aug-31-2024_21-24-03.pth
+Sat 31 Aug 2024 21:41:55 INFO  epoch 2 training [time: 352.83s, train loss: 8931.5244]
+Sat 31 Aug 2024 21:42:11 INFO  epoch 2 evaluating [time: 15.71s, valid_score: 0.051000]
+Sat 31 Aug 2024 21:42:11 INFO  valid result: 
+recall@10 : 0.153    mrr@10 : 0.051    ndcg@10 : 0.0745    hit@10 : 0.153    precision@10 : 0.0153
+Sat 31 Aug 2024 21:42:11 INFO  Saving current: saved\BERT4Rec-Aug-31-2024_21-24-03.pth
+Sat 31 Aug 2024 21:48:20 INFO  epoch 3 training [time: 369.08s, train loss: 8783.9756]
+Sat 31 Aug 2024 21:48:35 INFO  epoch 3 evaluating [time: 14.67s, valid_score: 0.053100]
+Sat 31 Aug 2024 21:48:35 INFO  valid result: 
+recall@10 : 0.1598    mrr@10 : 0.0531    ndcg@10 : 0.0777    hit@10 : 0.1598    precision@10 : 0.016
+Sat 31 Aug 2024 21:48:35 INFO  Saving current: saved\BERT4Rec-Aug-31-2024_21-24-03.pth
+Sat 31 Aug 2024 21:54:59 INFO  epoch 4 training [time: 383.85s, train loss: 8709.2516]
+Sat 31 Aug 2024 21:55:15 INFO  epoch 4 evaluating [time: 15.71s, valid_score: 0.055000]
+Sat 31 Aug 2024 21:55:15 INFO  valid result: 
+recall@10 : 0.1626    mrr@10 : 0.055    ndcg@10 : 0.0798    hit@10 : 0.1626    precision@10 : 0.0163
+Sat 31 Aug 2024 21:55:15 INFO  Saving current: saved\BERT4Rec-Aug-31-2024_21-24-03.pth
+Sat 31 Aug 2024 21:55:15 INFO  Loading model structure and parameters from saved\BERT4Rec-Aug-31-2024_21-24-03.pth
