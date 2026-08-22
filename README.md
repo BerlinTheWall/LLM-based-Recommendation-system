@@ -129,16 +129,6 @@ saved/                    model checkpoints
 Python · PyTorch Lightning · CUDA · SBERT (Sentence-Transformers) ·
 scikit-learn · pandas · NumPy · TensorBoard
 
-## Running it
-
-```bash
-pip install -r requirements.txt    # [FILL: add a requirements.txt]
-```
-
-**[FILL: which notebook or script reproduces the headline result, and where the
-data should sit. Two or three lines — a reader who can't run it will not try
-twice.]**
-
 ## Limitations and future work
 
 **Transformer layers for embedding generation.** Only a limited set of model
@@ -166,16 +156,4 @@ Supervised by Dr. Fares Hedayati and Dr. Holakou Rahmanian.
 **[FILL: commit the PDF to this repo and link it here — simplest option — or
 link the arXiv preprint once it is up.]**
 
----
 
-### Housekeeping before publishing
-
-`log/`, `log_tensorboard/` and `saved/` are training artefacts and model
-checkpoints tracked in git. Once you've read the numbers off TensorBoard:
-
-```bash
-git rm -r --cached log log_tensorboard saved
-printf 'log/\nlog_tensorboard/\nsaved/\n' >> .gitignore
-git commit -m "Stop tracking training artefacts"
-git push
-```
